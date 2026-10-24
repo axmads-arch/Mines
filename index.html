@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kofexona biznes reja</title>
+<style>
+:root{--bg:#faf6f0;--card:#fff;--tx:#2b2118;--mut:#85766a;--ac:#8a4b24;--acx:#fff;--ok:#2e7d4f;--bad:#b3392f;--bd:#e6dccf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1511;--card:#271e18;--tx:#f1e7dc;--mut:#a8998b;--ac:#d98c58;--acx:#1b1511;--ok:#6cc08c;--bad:#ef7b70;--bd:#3b2f26;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:10px 14px 50px}
+h1{font-size:19px;margin:0 0 8px}
+h2{font-size:17px;margin:0 0 6px}
+nav{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px}
+nav button{white-space:nowrap}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 13px;border-radius:10px;cursor:pointer}
+button.on,button.p{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+button.d{color:var(--bad);padding:8px 10px}
+#sum{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--ac);color:var(--acx);border-radius:12px;padding:8px 10px;margin-bottom:10px;font-size:13px}
+#sum b{display:block;font-size:15px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.r{display:grid;gap:6px;margin-bottom:6px;align-items:center}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sp{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)}
+.sp:last-child{border:none}
+.mut{color:var(--mut);font-size:13px}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
+input,select,textarea{font:inherit;width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-width:0}
+label{display:block;font-size:12px;color:var(--mut);margin:6px 0 2px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kpi div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.kpi b{display:block;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:5px 3px;border-bottom:1px solid var(--bd);text-align:right}
+th:first-child,td:first-child{text-align:left}
+@media print{nav,#sum,.noprint{display:none!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<main>
+<h1>☕ Kofexona biznes reja</h1>
+<div id="sum"></div>
+<nav id="nav"></nav>
+<div id="app"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>isFinite(n)?Math.round(n).toLocaleString('ru-RU')+' so‘m':'—';
+const short=n=>Math.abs(n)>=1e6?(n/1e6).toFixed(1)+' mln':Math.round(n).toLocaleString('ru-RU');
+const seed=()=>({
+capex:[{n:'Kofe mashina',v:60000000},{n:'Kofe tegirmon',v:8000000},{n:'Remont va dizayn',v:40000000},{n:'Mebel va jihozlar',v:20000000},{n:'Dastlabki mahsulot',v:10000000},{n:'Hujjat va ruxsatnomalar',v:3000000},{n:'Ochilish reklamasi',v:5000000},{n:'Zaxira fond',v:20000000}],
+ings:[{id:'i1',n:'Kofe donasi',u:'g',p:180000,q:1000},{id:'i2',n:'Sut',u:'ml',p:12000,q:1000},{id:'i3',n:'Choy',u:'g',p:60000,q:1000},{id:'i4',n:'Stakan + qopqoq',u:'dona',p:1200,q:1},{id:'i5',n:'Tayyor cheesecake',u:'dona',p:9000,q:1},{id:'i6',n:'Kruassan (xamirdan)',u:'dona',p:6000,q:1}],
+menu:[{n:'Americano',cost:0,price:18000,qty:25,items:[{i:'i1',a:18},{i:'i4',a:1}]},{n:'Latte',cost:0,price:25000,qty:35,items:[{i:'i1',a:18},{i:'i2',a:180},{i:'i4',a:1}]},{n:'Cappuccino',cost:0,price:24000,qty:30,items:[{i:'i1',a:18},{i:'i2',a:120},{i:'i4',a:1}]},{n:'Choy',cost:0,price:10000,qty:15,items:[{i:'i3',a:5},{i:'i4',a:1}]},{n:'Cheesecake',cost:0,price:28000,qty:12,items:[{i:'i5',a:1}]},{n:'Kruassan',cost:0,price:18000,qty:15,items:[{i:'i6',a:1}]}],
+fixed:[{n:'Arenda',v:8000000},{n:'Kommunal',v:2000000},{n:'Marketing',v:2000000},{n:'Boshqa xarajat',v:1000000}],
+staff:[{n:'Barista',cnt:2,sal:3500000},{n:'Kassir / yordamchi',cnt:1,sal:3000000}],
+p:{days:30,tax:4,ramp:3,start:50,lvl:100,wk:[100,100,100,100,110,130,130]}});
+function load(){try{const r=localStorage.getItem('kofexona_plan_v1');if(r){const d=JSON.parse(r);if(!d.ings)d.ings=[];d.menu.forEach(x=>{if(!x.items)x.items=[]});return d}}catch(e){}return seed()}
+function save(){try{localStorage.setItem('kofexona_plan_v1',JSON.stringify(S))}catch(e){}}
+let S=load(),tab='capex';
+const ic=id=>S.ings.find(i=>i.id===id);
+const mc=x=>x.items&&x.items.length?x.items.reduce((s,t)=>{const i=ic(t.i);return s+(i&&i.q?t.a*i.p/i.q:0)},0):x.cost;
+function calc(k=1){
+ const P=S.p,avg=P.wk.reduce((a,b)=>a+b,0)/7/100,m=P.lvl/100*k*avg;
+ let dr=0,dc=0,dq=0;S.menu.forEach(x=>{dr+=x.price*x.qty;dc+=mc(x)*x.qty;dq+=x.qty});
+ const rev=dr*m*P.days,cogs=dc*m*P.days,fixed=S.fixed.reduce((a,x)=>a+x.v,0)+S.staff.reduce((a,x)=>a+x.cnt*x.sal,0),tax=rev*P.tax/100,net=rev-cogs-fixed-tax,capex=S.capex.reduce((a,x)=>a+x.v,0);
+ const cm=rev?1-cogs/rev-P.tax/100:0,be=cm>0?fixed/cm:Infinity;
+ let cum=-capex,pb=null;const fc=[];
+ for(let i=1;i<=60;i++){const f=i>P.ramp?1:(P.start+(100-P.start)*(i-1)/Math.max(P.ramp,1))/100;const n=(rev-cogs-tax)*f-fixed;cum+=n;if(i<=24)fc.push({i,rev:rev*f,n,cum});if(pb===null&&cum>=0)pb=i}
+ return{dr,dq,rev,cogs,fixed,tax,net,gross:rev-cogs,capex,cm,be,pb,fc,m,avgP:dq?dr/dq:0}
+}
+const TABS=[['capex','Investitsiya'],['ing','Ingredient'],['menu','Menyu'],['fixed','Xarajat'],['set','Sozlama'],['res','Natija'],['bk','Zaxira']];
+function render(){
+ $('#nav').innerHTML=TABS.map(([k,t])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()">${t}</button>`).join('');
+ $('#app').innerHTML=({capex:vCapex,ing:vIng,menu:vMenu,fixed:vFixed,set:vSet,res:vRes,bk:vBk})[tab]();upd();
+}
+function upd(){
+ const c=calc();
+ $('#sum').innerHTML=`<div>Oylik sof foyda<b>${short(c.net)}</b></div><div>Qoplanish<b>${c.pb?c.pb+' oy':'60+ oy'}</b></div><div>Investitsiya<b>${short(c.capex)}</b></div>`;
+ S.menu.forEach((x,n)=>{const e=$('#mi'+n);if(e){const cs=mc(x),mg=x.price?(x.price-cs)/x.price*100:0,ci=$('#mc'+n);if(ci&&x.items.length)ci.value=Math.round(cs);e.innerHTML=`Tannarx: ${money(cs)} · Foyda: ${money(x.price-cs)} · Marja: <b class="${mg>=60?'ok':mg>=40?'':'bad'}">${mg.toFixed(0)}%</b> · Kunlik tushum: ${money(x.price*x.qty)}`}});
+ const t=$('#tot');if(t){const tt=a=>S[a].reduce((s,x)=>s+(x.v||0),0);t.textContent=money(tab==='capex'?tt('capex'):tt('fixed')+S.staff.reduce((s,x)=>s+x.cnt*x.sal,0))}
+}
+function st(a,n,k,v,num){S[a][n][k]=num?+v:v;save();upd()}
+function del(a,n){S[a].splice(n,1);save();render()}
+function add(a,o){S[a].push(o);save();render()}
+function rows(a,cols,tpl){return S[a].map((x,n)=>`<div class="r" style="grid-template-columns:${tpl}">${cols.map(c=>`<input ${c[1]?'type="number" inputmode="decimal"':''} placeholder="${c[2]}" value="${esc(x[c[0]])}" oninput="st('${a}',${n},'${c[0]}',this.value${c[1]?',1':''})">`).join('')}<button class="d" onclick="del('${a}',${n})">✕</button></div>`).join('')}
+function vCapex(){return `<div class="card"><h2>Boshlang‘ich investitsiya</h2><p class="mut">Ochilishdan oldin bir marta ketadigan barcha xarajatlar.</p>${rows('capex',[['n',0,'Nomi'],['v',1,'Summa']],'1fr 130px 40px')}<button onclick="add('capex',{n:'',v:0})">+ Qo‘shish</button><div class="sp" style="margin-top:10px"><b>Jami</b><b id="tot"></b></div></div>`}
+function vMenu(){return `<div class="card"><h2>Menyu va kunlik sotuv</h2><p class="mut">Ingredient qo‘shsangiz, tannarx o‘zi hisoblanadi (Ingredient bo‘limidagi narxlardan). Ingredient qo‘shmasangiz, tannarxni qo‘lda kiritasiz. Sotuv sonini o‘rtacha kun uchun kiriting.</p></div>`+S.menu.map((x,n)=>`<div class="card"><div class="r" style="grid-template-columns:1fr 40px"><input value="${esc(x.n)}" placeholder="Nomi" oninput="st('menu',${n},'n',this.value)"><button class="d" onclick="del('menu',${n})">✕</button></div><div class="g3"><div><label>${x.items.length?'Tannarx (avto)':'Tannarx (qo‘lda)'}</label><input id="mc${n}" type="number" inputmode="decimal" value="${x.items.length?Math.round(mc(x)):x.cost}" ${x.items.length?'disabled':''} oninput="st('menu',${n},'cost',this.value,1)"></div><div><label>Sotuv narxi</label><input type="number" inputmode="decimal" value="${x.price}" oninput="st('menu',${n},'price',this.value,1)"></div><div><label>Kuniga (dona)</label><input type="number" inputmode="decimal" value="${x.qty}" oninput="st('menu',${n},'qty',this.value,1)"></div></div><label>Ingredientlar (tex karta)</label>${x.items.map((it,j)=>`<div class="r" style="grid-template-columns:1fr 80px 40px"><select onchange="si(${n},${j},'i',this.value)">${ingOpts(it.i)}</select><input type="number" inputmode="decimal" value="${it.a}" oninput="si(${n},${j},'a',this.value)"><button class="d" onclick="S.menu[${n}].items.splice(${j},1);save();render()">✕</button></div>`).join('')}<button onclick="addIt(${n})">+ Ingredient</button><div class="mut" id="mi${n}" style="margin-top:6px"></div></div>`).join('')+`<button class="p" onclick="add('menu',{n:'',cost:0,price:0,qty:0,items:[]})">+ Yangi mahsulot</button>`}
+function vFixed(){return `<div class="card"><h2>Oylik doimiy xarajatlar</h2>${rows('fixed',[['n',0,'Nomi'],['v',1,'Oyiga']],'1fr 130px 40px')}<button onclick="add('fixed',{n:'',v:0})">+ Qo‘shish</button></div><div class="card"><h2>Xodimlar</h2><p class="mut">Nomi, soni, bitta xodim oyligi.</p>${rows('staff',[['n',0,'Lavozim'],['cnt',1,'Soni'],['sal',1,'Oylik']],'1fr 60px 110px 40px')}<button onclick="add('staff',{n:'',cnt:1,sal:0})">+ Xodim</button><div class="sp" style="margin-top:10px"><b>Jami oylik xarajat</b><b id="tot"></b></div></div>`}
+function ingOpts(sel){return S.ings.map(i=>`<option value="${i.id}" ${i.id===sel?'selected':''}>${esc(i.n)} (${esc(i.u)})</option>`).join('')}
+function si(n,j,k,v){S.menu[n].items[j][k]=k==='a'?+v:v;save();k==='i'?render():upd()}
+function addIt(n){if(!S.ings.length){alert('Avval Ingredient bo‘limiga ingredient qo‘shing');return}S.menu[n].items.push({i:S.ings[0].id,a:0});save();render()}
+function delIng(n){const i=S.ings[n];if(S.menu.some(m=>m.items.some(t=>t.i===i.id)))return alert('Bu ingredient menyuda ishlatilgan');S.ings.splice(n,1);save();render()}
+function vIng(){return `<div class="card"><h2>Ingredientlar bazasi</h2><p class="mut">Qadoq narxi va miqdorini kiriting (masalan, kofe 1000 g — 180 000). Narx o‘zgarsa, barcha tannarx qayta hisoblanadi.</p>`+S.ings.map((x,n)=>`<div style="border-top:1px solid var(--bd);padding:8px 0"><div class="r" style="grid-template-columns:1fr 40px"><input value="${esc(x.n)}" placeholder="Nomi" oninput="st('ings',${n},'n',this.value)"><button class="d" onclick="delIng(${n})">✕</button></div><div class="g3"><div><label>Qadoq narxi</label><input type="number" inputmode="numeric" value="${x.p}" oninput="st('ings',${n},'p',this.value,1)"></div><div><label>Qadoq miqdori</label><input type="number" inputmode="decimal" value="${x.q}" oninput="st('ings',${n},'q',this.value,1)"></div><div><label>Birlik</label><select onchange="S.ings[${n}].u=this.value;save();render()">${['g','ml','dona'].map(u=>`<option ${u===x.u?'selected':''}>${u}</option>`).join('')}</select></div></div><div class="mut">1 ${esc(x.u)} = ${(x.q?x.p/x.q:0).toFixed(2)} so‘m</div></div>`).join('')+`<button class="p" onclick="add('ings',{id:'i'+Date.now().toString(36),n:'',u:'g',p:0,q:1000})">+ Ingredient</button></div>`}
+const WK=['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+function vSet(){const P=S.p,f=(k,l)=>`<div><label>${l}</label><input type="number" inputmode="decimal" value="${P[k]}" oninput="S.p.${k}=+this.value;save();upd()"></div>`;
+ return `<div class="card"><h2>Umumiy sozlamalar</h2><div class="g3">${f('days','Ish kuni/oy')}${f('tax','Soliq, % tushumdan')}${f('lvl','Sotuv darajasi, %')}</div><div class="g3">${f('ramp','O‘sish davri (oy)')}${f('start','Birinchi oy sotuv, %')}</div><p class="mut">Sotuv darajasi: menyudagi kunlik sotuvning necha foizi amalga oshishini bildiradi. O‘sish davrida sotuv birinchi oydagi foizdan 100% ga tekis ko‘tariladi. Soliq foizini o‘zingizdagi tizimga qarab kiriting.</p></div><div class="card"><h2>Hafta kunlari bo‘yicha sotuv, %</h2><p class="mut">100 = o‘rtacha kun. Dam olish kunlari odatda yuqori.</p><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${WK.map((d,i)=>`<div><label>${d}</label><input type="number" value="${P.wk[i]}" oninput="S.p.wk[${i}]=+this.value;save();upd()" style="padding:6px 3px"></div>`).join('')}</div></div>`}
+function chart(fc){const W=600,H=180,z=H/2,mx=Math.max(...fc.map(x=>Math.abs(x.cum)),1),bw=W/fc.length;
+ return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Jamg‘arma pul oqimi">`+fc.map((x,i)=>{const h=Math.abs(x.cum)/mx*(z-6);return `<rect x="${i*bw+2}" y="${x.cum>=0?z-h:z}" width="${bw-4}" height="${Math.max(h,1)}" fill="${x.cum>=0?'var(--ok)':'var(--bad)'}" rx="2"/>`}).join('')+`<line x1="0" x2="${W}" y1="${z}" y2="${z}" stroke="var(--mut)" stroke-width="1"/></svg>`}
+function vRes(){const c=calc(),pc=v=>c.rev?(v/c.rev*100).toFixed(1)+'%':'—',nm=c.rev?c.net/c.rev*100:0;
+ const sc=[['Pessimistik (−30%)',.7],['Asosiy',1],['Optimistik (+30%)',1.3]].map(([l,k])=>{const x=calc(k);return `<tr><td>${l}</td><td>${short(x.rev)}</td><td class="${x.net>=0?'ok':'bad'}">${short(x.net)}</td><td>${x.pb?x.pb+' oy':'60+'}</td></tr>`}).join('');
+ return `<div class="kpi"><div class="mut">Oylik tushum<b>${money(c.rev)}</b></div><div class="mut">Oylik sof foyda<b class="${c.net>=0?'ok':'bad'}">${money(c.net)}</b></div><div class="mut">Sof foyda marjasi<b>${nm.toFixed(1)}%</b></div><div class="mut">Yillik ROI<b>${c.capex?(c.net*12/c.capex*100).toFixed(0)+'%':'—'}</b></div></div>
+ <div class="card"><h2>Oylik hisob (to‘liq quvvatda)</h2>
+ <div class="sp"><span>Tushum</span><b>${money(c.rev)}</b></div>
+ <div class="sp"><span>Mahsulot tannarxi (${pc(c.cogs)})</span><b>−${money(c.cogs)}</b></div>
+ <div class="sp"><span>Yalpi foyda (${pc(c.gross)})</span><b>${money(c.gross)}</b></div>
+ <div class="sp"><span>Doimiy xarajat (${pc(c.fixed)})</span><b>−${money(c.fixed)}</b></div>
+ <div class="sp"><span>Soliq (${pc(c.tax)})</span><b>−${money(c.tax)}</b></div>
+ <div class="sp"><b>Sof foyda (${pc(c.net)})</b><b class="${c.net>=0?'ok':'bad'}">${money(c.net)}</b></div></div>
+ <div class="card"><h2>Zararsizlik nuqtasi</h2>
+ <div class="sp"><span>Oyiga kerakli tushum</span><b>${money(c.be)}</b></div>
+ <div class="sp"><span>Kuniga kerakli tushum</span><b>${money(c.be/S.p.days)}</b></div>
+ <div class="sp"><span>Kuniga kerakli sotuv (dona)</span><b>${isFinite(c.be)&&c.avgP?Math.ceil(c.be/S.p.days/c.avgP):'—'}</b></div>
+ <div class="sp"><span>Hozirgi kunlik sotuv (o‘rtacha)</span><b>${Math.round(c.dq*c.m)} dona · ${money(c.dr*c.m)}</b></div>
+ <div class="sp"><span>Investitsiya qoplanishi (o‘sish davri bilan)</span><b>${c.pb?c.pb+' oy':'60 oydan ko‘p'}</b></div></div>
+ <div class="card"><h2>Stsenariylar</h2><table><tr><th></th><th>Tushum</th><th>Sof foyda</th><th>Qoplanish</th></tr>${sc}</table></div>
+ <div class="card"><h2>24 oylik jamg‘arma pul oqimi</h2><p class="mut">Yashil — investitsiya qoplangan, qizil — hali qoplanmagan.</p>${chart(c.fc)}</div>
+ <div class="card"><h2>Oylar bo‘yicha (1–12)</h2><table><tr><th>Oy</th><th>Tushum</th><th>Sof foyda</th><th>Jamg‘arma</th></tr>${c.fc.slice(0,12).map(x=>`<tr><td>${x.i}</td><td>${short(x.rev)}</td><td class="${x.n>=0?'ok':'bad'}">${short(x.n)}</td><td class="${x.cum>=0?'ok':'bad'}">${short(x.cum)}</td></tr>`).join('')}</table></div>
+ <button class="noprint" onclick="window.print()">Chop etish</button>`}
+function vBk(){return `<div class="card"><h2>Zaxira nusxa</h2><p class="mut">Matnni nusxalab saqlab qo‘ying. Tiklash uchun shu yerga qo‘yib, “Tiklash”ni bosing.</p><textarea id="bk" rows="10">${esc(JSON.stringify(S))}</textarea><div style="display:flex;gap:8px;margin-top:10px"><button class="p" onclick="try{navigator.clipboard.writeText($('#bk').value);alert('Nusxalandi')}catch(e){$('#bk').select()}">Nusxalash</button><button onclick="restore()">Tiklash</button><button class="d" onclick="if(confirm('Hamma narsa namuna ma‘lumotga qaytsinmi?')){S=seed();save();render()}">Tozalash</button></div></div>`}
+function restore(){try{const d=JSON.parse($('#bk').value);if(!d.capex||!d.menu||!d.fixed||!d.staff||!d.p)throw 0;S=d;if(!S.ings)S.ings=[];S.menu.forEach(x=>{if(!x.items)x.items=[]});save();alert('Tiklandi');tab='res';render()}catch(e){alert('Noto‘g‘ri format')}}
+render();
+</script>
+</body>
+</html>
